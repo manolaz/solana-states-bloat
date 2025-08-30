@@ -1,8 +1,8 @@
-# Solana State Bloat: Enduring Solutions for Data Storage – Study Guide
+# Understanding Solana's State Bloat: A Practical Guide
 
-## I. Core Concepts and Solana's Architecture
+## Core Concepts: How Solana Works
 
-This section covers the foundational elements of Solana's design and the inherent challenges they create.
+Let's dive into the basics of Solana's design and why it creates these storage challenges.
 
 ### Solana's Account Model and SeaLevel Runtime
 
