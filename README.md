@@ -378,11 +378,11 @@ gantt
   - Cold state: 5-30 second retrieval
 
 ```mermaid
-pie title "ASMP Performance Improvements"
-    "Storage Reduction (60-80%)" : 70
-    "Validator Cost Reduction (40-60%)" : 50
-    "Throughput Preservation" : 100
-    "Access Latency Optimization" : 80
+xychart-beta
+    title "ASMP Performance Improvements"
+    x-axis ["Storage Reduction", "Validator Cost Reduction", "Throughput Preservation", "Access Latency Optimization"]
+    y-axis "Percentage (%)"
+    bar [70, 50, 100, 80]
 ```
 
 ### 6.2 Complementary Solution: Protocol-Level Archival System
