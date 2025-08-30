@@ -117,6 +117,16 @@ Solana's account model enables parallel transaction processing by isolating data
 
 The fundamental trade-off is clear: parallel processing efficiency requires complete state accessibility, leading to linear growth in storage requirements with network adoption.
 
+```mermaid
+flowchart TD
+    A[Parallel Transaction Processing] --> B[Account-Based Model]
+    B --> C[Data Isolation]
+    C --> D[Full State Replication]
+    D --> E[Linear Storage Growth]
+    E --> F[Increased Validator Costs]
+    F --> G[Centralization Risks]
+```
+
 ### 3.2 Quantitative Assessment of Current State
 
 #### 3.2.1 Storage Metrics
@@ -199,6 +209,24 @@ Solana's existing compression utilizes Merkle trees to store cryptographic finge
 - Broken Cross-Program Invocation (CPI) compatibility
 - Dependence on centralized RPC providers for data access
 - Limited applicability beyond specific use cases (primarily NFTs)
+
+```mermaid
+graph TD
+    A[Root Hash<br/>On-Chain] --> B[Branch Hash 1]
+    A --> C[Branch Hash 2]
+    B --> D[Leaf Hash 1<br/>Account Data 1]
+    B --> E[Leaf Hash 2<br/>Account Data 2]
+    C --> F[Leaf Hash 3<br/>Account Data 3]
+    C --> G[Leaf Hash 4<br/>Account Data 4]
+    
+    D --> H[Off-Chain Storage]
+    E --> H
+    F --> H
+    G --> H
+    
+    style A fill:#e1f5fe
+    style H fill:#fff3e0
+```
 
 ### 5.2 Interoperability Challenges
 
@@ -317,6 +345,28 @@ interface AdaptiveRentModel {
 - Monitor performance and adjust parameters
 - Activate full feature set across mainnet
 
+```mermaid
+gantt
+    title ASMP Implementation Roadmap
+    dateFormat YYYY-MM-DD
+    section Phase 1: Infrastructure
+    Deploy storage infrastructure : 2025-09-01, 180d
+    Implement ML algorithms     : 2025-10-01, 150d
+    Testnet validation         : 2025-12-01, 90d
+    section Phase 2: Economic Integration
+    Adaptive rent mechanisms   : 2026-03-01, 120d
+    Storage mining rewards     : 2026-04-01, 90d
+    Account migration programs : 2026-05-01, 60d
+    section Phase 3: Protocol Changes
+    SIMD protocol updates      : 2026-07-01, 180d
+    State transition automation: 2026-09-01, 120d
+    Composability features     : 2026-11-01, 90d
+    section Phase 4: Network Deployment
+    Gradual account migration  : 2027-01-01, 180d
+    Performance monitoring     : 2027-03-01, 120d
+    Full feature activation    : 2027-05-01, 60d
+```
+
 #### 6.1.5 Expected Performance Improvements
 
 - **Storage Reduction:** 60-80% decrease in live state size
@@ -326,6 +376,14 @@ interface AdaptiveRentModel {
   - Hot state: Current performance levels
   - Warm state: 1-2 block delay
   - Cold state: 5-30 second retrieval
+
+```mermaid
+pie title ASMP Performance Improvements
+    "Storage Reduction (60-80%)" : 70
+    "Validator Cost Reduction (40-60%)" : 50
+    "Throughput Preservation" : 100
+    "Access Latency Optimization" : 80
+```
 
 ### 6.2 Complementary Solution: Protocol-Level Archival System
 
@@ -344,6 +402,32 @@ This solution formalizes and enhances existing validator behaviors through econo
 - Dormant accounts stored in distributed off-chain networks
 - Cryptographic proofs maintain on-chain integrity
 - Economic incentives for archival node participation
+
+```mermaid
+graph TD
+    subgraph "Active State Layer"
+        A[Validator Node 1<br/>Full Replication]
+        B[Validator Node 2<br/>Full Replication]
+        C[Validator Node N<br/>Full Replication]
+    end
+    
+    subgraph "Archival State Layer"
+        D[Archival Node 1<br/>Off-Chain Storage]
+        E[Archival Node 2<br/>Off-Chain Storage]
+        F[Archival Node M<br/>Distributed Network]
+    end
+    
+    A --> D
+    B --> E
+    C --> F
+    
+    D --> G[Cryptographic Proof<br/>On-Chain]
+    E --> G
+    F --> G
+    
+    style A fill:#e8f5e8
+    style D fill:#fff3e0
+```
 
 #### 6.2.2 Cryptographic Integrity Framework
 
@@ -388,6 +472,23 @@ interface ZKAccount {
 }
 ```
 
+```mermaid
+sequenceDiagram
+    participant U as User/Application
+    participant V as Validator
+    participant P as ZK Prover
+    participant S as Off-Chain Storage
+
+    U->>P: Request data with query
+    P->>S: Fetch data from storage
+    S-->>P: Return data
+    P->>P: Generate ZK proof
+    P->>V: Submit proof + data commitment
+    V->>V: Verify ZK proof on-chain
+    V-->>U: Verified data access
+    Note over U,V: Zero-knowledge verification<br/>ensures data integrity
+```
+
 #### 6.3.2 Implementation Considerations
 
 **Advantages:**
@@ -412,6 +513,27 @@ State bloat mitigation is crucial for:
 - Reducing barriers to ecosystem participation  
 - Enabling sustainable scaling for mainstream adoption
 - Supporting real-world asset tokenization initiatives
+
+```mermaid
+flowchart TD
+    A[State Bloat Mitigation] --> B[Maintain Validator<br/>Decentralization]
+    A --> C[Reduce Entry<br/>Barriers]
+    A --> D[Enable Sustainable<br/>Scaling]
+    A --> E[Support RWA<br/>Tokenization]
+    
+    B --> F[Enhanced Network<br/>Security]
+    C --> G[Ecosystem<br/>Growth]
+    D --> H[Mainstream<br/>Adoption]
+    E --> I[Real-World<br/>Integration]
+    
+    F --> J[Long-term Viability]
+    G --> J
+    H --> J
+    I --> J
+    
+    style A fill:#e1f5fe
+    style J fill:#c8e6c9
+```
 
 ### 7.2 Strategic Recommendations
 
