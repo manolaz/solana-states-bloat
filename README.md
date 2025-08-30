@@ -63,65 +63,140 @@ The core issue: Rent is an imperfect fix for deeper problems — the absence of 
 
 ### 2.1. Architectural Differences: Monolithic vs. Multi-Layer
 
-The state bloat problem on Solana is best understood in comparison to Ethereum's approach to scaling. Solana operates as a monolithic, single-sharded blockchain where all transactions and their associated state updates occur on a single layer.1 This design philosophy, which keeps all liquidity and data in a unified state, avoids the liquidity fragmentation and user complexity that plague multi-layered networks.11 In contrast, Ethereum has pursued a multi-layered scaling strategy, relying on Layer 2 (L2) networks like Arbitrum and Optimism to process the vast majority of transactions off-chain.1 Only a minimal proof of these transactions, typically a "data blob," is submitted back to the Ethereum mainnet for final settlement and security.1 This represents a fundamental divergence in design philosophies. Solana aims for simplicity by keeping all activity on a single, high-throughput layer, while Ethereum embraces complexity to offload its computational and storage burden.
-The proposed SIMD-0341 solution, which leverages state compression and off-chain data indexing, signals a significant strategic shift for Solana. By pushing account data to off-chain indexers and a cheaper, on-chain ledger, Solana is, in effect, moving closer to Ethereum's multi-layered design. This approach, while a pragmatic solution, challenges Solana's core design ethos and pushes it away from its simplicity [Query].
+Solana's state bloat problem is best understood through comparison with Ethereum's scaling approach. Solana operates as a **monolithic, single-sharded blockchain**, where all transactions and state updates occur on a single layer.¹ This design keeps all liquidity and data unified, avoiding the fragmentation and complexity of multi-layered networks.¹¹
+
+In contrast, Ethereum pursues a **multi-layered scaling strategy**, relying on Layer 2 (L2) networks like Arbitrum and Optimism to process most transactions off-chain.¹ Only minimal proofs, such as "data blobs," are submitted to the Ethereum mainnet for settlement and security.¹
+
+#### Key Architectural Divergences
+
+- **Solana**: Simplicity through unified, high-throughput layer (1,000+ TPS).
+- **Ethereum**: Complexity to offload computational and storage burdens via L2s.
+- **Implication**: Solana's design prioritizes speed but amplifies state replication; Ethereum reduces mainnet load but introduces user complexity.
+
+The proposed SIMD-0341 solution, leveraging state compression and off-chain indexing, marks a strategic shift for Solana toward Ethereum's multi-layered model. While pragmatic, this challenges Solana's core ethos of simplicity [Query].
 
 ### 2.2. State Growth and Bottlenecks: A Data-Driven Comparison
 
-The architectural differences between the two networks are reflected in their respective state growth metrics. Ethereum's state, while still a concern for its validator community, grows at a comparatively modest rate of approximately 2.62 GiB per month.12 This is an order of magnitude smaller than the raw ledger data growth on Solana, which is estimated to be several terabytes per month.3 The primary reason for this is Ethereum's lower transaction volume (30 TPS versus Solana's 1,000+ TPS) and the offloading of data to L2 networks, which dramatically reduces the state burden on the mainnet.11
-However, both networks face the same fundamental problem: the perpetual growth of on-chain state. The crucial difference is that Solana's problem is more acute and urgent due to its design for massive throughput. Ethereum's long-term research into solutions like "statelessness" and "state expiry" protocols demonstrates a shared recognition of this challenge across the blockchain industry.13 This highlights a convergence in blockchain design philosophies. Despite their different starting points, both Solana and Ethereum are being forced to grapple with the unsustainability of a full-state, fully-replicated model at scale. Therefore, the architectural solutions proposed for Solana's state bloat problem can be viewed as a unique, high-performance take on these shared industry challenges.
+Architectural differences manifest in state growth metrics:
+
+- **Ethereum's State Growth**: Modest at ~2.62 GiB per month.¹²
+- **Solana's State Growth**: Several terabytes per month, an order of magnitude higher.³
+
+#### Reasons for Disparity
+
+- **Transaction Volume**: Ethereum ~30 TPS vs. Solana 1,000+ TPS.
+- **Data Offloading**: Ethereum's L2s reduce mainnet burden; Solana replicates all data on-chain.¹¹
+
+Despite differences, both networks confront **perpetual on-chain state growth**. Solana's issue is more acute due to its throughput design. Ethereum's research into "statelessness" and "state expiry" protocols reflects industry-wide recognition of this challenge.¹³ This convergence suggests Solana's solutions could be a high-performance adaptation of shared blockchain principles.
+
+#### Shared Challenges
+
+- Unsustainability of full-state, fully-replicated models at scale.
+- Need for innovative storage and archival mechanisms.
 
 ## 3. The State of the Art: A Critical Review of Existing State Compression
 
 ### 3.1. Technical Mechanics of Concurrent Merkle Trees (cNFTs)
 
-Solana has already implemented a form of state compression, primarily for high-volume use cases like Non-Fungible Tokens (NFTs).15 This solution, which is enabled by a "concurrent Merkle tree," is a cryptographic data structure that allows for multiple, rapid changes to the tree in the same block without invalidating a proof.16 The core mechanism involves storing a "fingerprint" or root hash of the data on-chain, while the actual, uncompressed data is written to the cheaper, append-only "ledger state".16
-This is a clever and effective approach that significantly reduces the storage burden on the expensive "account state." To mint a compressed NFT, a program passes the metadata to the State Compression Program, which hashes it and emits it as an event to a "Noop program".19 The hash is then stored in the Merkle tree account, and the full metadata is logged to the ledger state where it exists forever, accessible for indexing.19 This process has yielded dramatic cost savings, with a tree for 16,384 nodes costing only ~0.222 SOL to create, and the cost of minting one million compressed NFTs estimated at approximately $247.80.15 This is an astounding reduction compared to the millions of dollars it would cost to mint the same number of NFTs on other chains.15
+Solana has implemented **state compression** for high-volume use cases like NFTs via **concurrent Merkle trees** — cryptographic structures allowing rapid changes without invalidating proofs.¹⁵ This reduces storage by storing on-chain "fingerprints" (root hashes) while logging uncompressed data to the cheaper ledger state.¹⁶
+
+#### Compression Process
+
+- Metadata hashed and stored in Merkle tree account.
+- Full data logged to ledger state for indexing.
+- Enables efficient proofs for data integrity.
+
+This yields dramatic savings: A 16,384-node tree costs ~0.222 SOL, minting 1 million compressed NFTs ~$247.80 — far below traditional costs.¹⁵
 
 ### 3.2. Successes and Limitations: Why a New Solution is Required
 
-The existing state compression has proven to be a transformative solution for specific, high-volume use cases. Its success in the NFT space is undeniable, enabling projects like DRiP to mint over 68 million NFTs to a user base of 750,000 at a total cost of around $12,000.15 This has effectively lowered the barrier to entry for developers and users and unlocked new business models that rely on abundance and utility, rather than scarcity.15
-However, this solution is not a panacea for Solana's state bloat problem. As articulated in the user query, it introduces significant trade-offs that prevent it from being a truly "enduring" solution [Query]. The primary limitation is that the uncompressed data, while existing in the ledger state, is not directly accessible by on-chain programs through Cross-Program Invocation (CPI) calls [Query]. This harms data interoperability and breaks the composability that is central to Solana's design, forcing developers to rely on third-party RPC providers to index and serve the data from the ledger.19 This creates a critical vulnerability, as the Solana protocol does not guarantee that these RPC providers will faithfully store the data, and there is no on-chain mechanism to enforce data availability or prevent censorship.20 The current compression model, therefore, solves the problem of on-chain storage cost by creating a new, potentially more dangerous problem of centralized data availability and vendor lock-in.
-This is a stop-gap measure, a tactical fix that addresses one symptom (cost) by introducing a new dependency on centralized infrastructure. The report maintains that a truly enduring solution must solve the storage problem without compromising the network's core tenets of decentralization, composability, and censorship resistance.
+#### Successes
+
+- **Cost Reduction**: Enables projects like DRiP to mint 68 million NFTs for ~$12,000.¹⁵
+- **Scalability**: Unlocks abundance-based business models.
+- **Adoption**: Lowers barriers for developers and users.
+
+#### Limitations
+
+- **Data Interoperability**: Uncompressed data inaccessible via on-chain CPI calls, breaking composability [Query].
+- **Centralization Risk**: Relies on third-party RPC indexers for data serving, with no protocol guarantees for availability or censorship resistance.¹⁹ ²⁰
+- **Vendor Lock-In**: Creates dependency on centralized infrastructure.
+
+Existing compression is a **tactical fix** — it addresses costs but introduces new vulnerabilities. A truly enduring solution must preserve decentralization, composability, and censorship resistance without compromising core network principles.
 
 ## 4. Architectural Proposal I: A Protocol-Level Archival and Expiry System
 
-4.1. Technical Blueprint for a Two-Tiered State Model
+### 4.1. Technical Blueprint for a Two-Tiered State Model
 
-An enduring solution must build upon existing network behavior while addressing its shortcomings. This architectural blueprint proposes a formal, protocol-level archival and expiry system that decentralizes the existing, ad-hoc roles of pruning validators and centralized archive nodes. The system would create a two-tiered state model: an active state and a new archival state.
-The active state would function similarly to the current Solana account model, where frequently accessed accounts are replicated across all validator nodes for fast finality and seamless composability. A new, protocol-level rule would define a period of inactivity (e.g., 30-90 days), after which accounts are considered "dormant." Dormant accounts would be moved from the high-cost active state to a lower-cost archival state through a formal process known as state expiry.14
-The archival state would be a new, verifiable, and distributed off-chain storage network. Instead of being replicated across all validators, the data for dormant accounts would be moved to a network of specialized "archival nodes" or a decentralized storage protocol like Arweave.21 A small, on-chain "pointer" or a succinct cryptographic proof, such as a Merkle proof, would remain in the active state, attesting to the existence and integrity of the archival data.21 This approach leverages the same core concept as existing compression but generalizes it to all account data, and, crucially, decentralizes the archival role with protocol-level guarantees.
+This proposal builds on existing network behavior to create a **two-tiered state model**:
 
-4.2. Economic Incentives for Validators and the State Archival Bounty
+- **Active State**: Frequently accessed accounts replicated across validators for fast composability.
+- **Archival State**: Dormant accounts (inactive >30-90 days) moved to decentralized off-chain storage.
 
-To ensure the long-term viability of this two-tiered model, new economic incentives would need to be introduced. The protocol would be designed to provide a "state archival bounty" or a dedicated portion of network emissions to compensate archival nodes for the immense cost of storing and serving historical data.3 This is distinct from the current rent system, which is a one-time refundable deposit, and would create a continuous revenue stream for a new class of network participants. The incentives would be structured to attract a diverse set of operators specializing in data storage, thereby further decentralizing the network's data availability layer.6 This approach diversifies the network's economic model beyond block production and aligns with ongoing discussions about programmatic, market-based emissions and the Validator Admission Ticket (VAT) proposed in
-SIMD-0326.22
+#### Key Mechanisms
 
-4.3. Migration Strategy and Backward Compatibility
+- **State Expiry**: Protocol-level rules move dormant accounts to archival state.¹⁴
+- **Pointers**: On-chain Merkle proofs attest to off-chain data integrity.²¹
+- **Decentralization**: Archival via specialized nodes or protocols like Arweave, incentivized by protocol.
 
-Implementing this protocol would require a phased rollout via the Solana Improvement Document (SIMD) process.25 The implementation would not break existing applications immediately but would introduce new instructions and features for managing accounts in the two-tiered system. The core technical challenge would be designing a "rehydration" mechanism. This mechanism would allow a user or program to initiate a transaction that moves a dormant account back from the archival state into the active state. This would require the user to provide the on-chain proof and the off-chain data as transaction parameters, and the network would re-instantiate the full account on-chain for a fee. This approach provides a graceful migration path for existing applications while future-proofing the network against perpetual state growth.
+This generalizes compression, decentralizing archival with guarantees.
+
+### 4.2. Economic Incentives for Validators and the State Archival Bounty
+
+To sustain the model:
+
+- **State Archival Bounty**: Portion of emissions compensates archival nodes for storage/serving costs.³
+- **Continuous Revenue**: Unlike one-time rent, provides ongoing incentives.
+- **Diversification**: Attracts diverse operators, reducing centralization.⁶ Aligns with market-based emissions (e.g., SIMD-0326).²²
+
+### 4.3. Migration Strategy and Backward Compatibility
+
+#### Implementation via SIMD
+
+- Phased rollout to avoid breaking changes.²⁵
+- New instructions for state management.
+- **Rehydration**: Users provide proof + data to restore dormant accounts on-chain for a fee.
+
+Provides graceful migration, future-proofs against perpetual growth.
 
 ## 5. Architectural Proposal II: A Generalized Verifiable Off-Chain Data Protocol
 
-5.1. Leveraging ZK-Proofs for On-Chain Integrity
+### 5.1. Leveraging ZK-Proofs for On-Chain Integrity
 
-A more radical and future-proof solution is to fundamentally redefine the Solana account model by introducing a generalized verifiable off-chain data protocol. Instead of a dual-tiered state, this proposal suggests that all large, mutable data should be stored off-chain from the outset.
-The on-chain account would no longer hold the full data blob but would instead store a small, static, cryptographic proof that attests to the integrity of the off-chain data. The use of Zero-Knowledge (ZK) proofs, a technology actively being developed in the Solana ecosystem 26, would be a cornerstone of this model. A ZK-proof is a powerful primitive that can cryptographically prove the validity of a statement about off-chain data without revealing the data itself.28 This is more robust than a simple hash or Merkle root, as it can be used to verify complex claims about the data, such as a proof of ownership or a state transition. The raw, uncompressed account data would be stored on a decentralized, globally available storage network like Arweave or IPFS.21
+This radical proposal redefines Solana's account model: **all large, mutable data stored off-chain from outset**.
 
-5.2. Redefining Data Interoperability with On-Chain Proofs
+- On-chain accounts hold small, static **ZK-proofs** attesting to off-chain data integrity.²⁶ ²⁸
+- Raw data stored on decentralized networks like Arweave or IPFS.²¹
+- ZK-proofs enable verification of complex claims (e.g., ownership, transitions) without revealing data.
 
-This model directly addresses the primary weakness of the existing state compression: the breaking of CPI calls and data interoperability [Query]. In this new paradigm, the ZK-proof becomes a new, first-class data primitive. When a program needs to interact with off-chain data, a user would provide the raw data and its corresponding ZK-proof as transaction parameters. The program would then use a new CPI call to a native ZK-proof verification program, such as the ZkE1Gama1Proof11111111111111111111111111111 program, to verify the proof against the small, on-chain attestation.26
-This new model would be inherently composable. A program would no longer need to read and write to a large account. Instead, it would simply verify a proof, which is a computationally cheap operation. This would allow for complex, cross-program interactions to be verified on-chain without the need to ever store massive amounts of mutable data. This approach effectively makes state bloat a non-issue by design, as the on-chain "state" becomes a small, static proof rather than a large, perpetually expanding data set.
+Makes state bloat obsolete by design.
 
-5.3. Developer Tooling and User Experience Enhancements
+### 5.2. Redefining Data Interoperability with On-Chain Proofs
 
-The primary challenge of this solution is developer complexity. Working with ZK-proofs and off-chain data is not trivial. To ensure widespread adoption, a new generation of SDKs and developer tools would need to be created to abstract away these complexities. These tools would automate the process of off-chain data storage, ZK-proof generation, and transaction construction, making the experience seamless for the developer. For the end-user, the experience would be largely the same as the current model, but with a crucial difference: they would only have to pay a minimal, one-time fee to create their small, verifiable account, with no ongoing rent costs. This is the ultimate "enduring" solution, as it solves the problem at its core and future-proofs the network.
+Addresses compression's weakness: **full composability via proof verification**.
+
+- Users provide data + ZK-proof as transaction parameters.
+- Programs use new CPI calls to verify proofs against on-chain attestations (e.g., ZkE1Gama1Proof program).²⁶
+- Cheap verification enables complex cross-program interactions without storing large data.
+
+### 5.3. Developer Tooling and User Experience Enhancements
+
+#### Challenges
+
+- **Complexity**: ZK-proofs and off-chain data require expertise.
+
+#### Solutions
+
+- **SDKs & Tools**: Automate storage, proof generation, transaction construction for seamless developer experience.
+- **User Benefits**: Minimal one-time fees, no ongoing rent; experience similar to current model but with eliminated bloat risks.
+
+Ultimate enduring solution: future-proofs by decoupling on-chain state from data.
 
 ## 6. A Multi-Criteria Analysis of Proposed Solutions
 
 ### 6.1. The Trade-Off Matrix: Feasibility, Cost, and Decentralization
 
-An objective assessment of the proposed solutions requires a systematic comparison against the current model and the existing state compression. Each approach involves a unique set of trade-offs that must be carefully considered.
+Objective comparison of solutions:
 
 | Evaluation Criteria          | Current Solana Model      | Existing State Compression | Proposal I: Protocol-Level Archival | Proposal II: Verifiable Off-Chain |
 |------------------------------|---------------------------|----------------------------|-------------------------------------|-----------------------------------|
@@ -135,34 +210,55 @@ An objective assessment of the proposed solutions requires a systematic comparis
 
 ### 6.2. Short-Term Gains vs. Long-Term Resilience
 
-The analysis in the trade-off matrix indicates a clear distinction between the existing state compression and the two proposed architectural blueprints. The current compression solution is a tactical, short-term fix. It delivers immediate, dramatic cost reductions for specific applications like NFTs but does so at the expense of core network principles like decentralized data availability and composability. Its reliance on centralized RPC indexers is a significant centralization vector that could be a point of failure or censorship.
-In contrast, both Proposal I and Proposal II represent strategic, long-term solutions. Proposal I, a protocol-level archival and expiry system, is the most feasible and least disruptive "enduring" solution. It formalizes an existing behavior of the network, creating new economic incentives and a clear path to managing dormant accounts without compromising on-chain interoperability. Proposal II, a generalized verifiable off-chain data protocol, is the ultimate "enduring" solution. While its implementation is more complex and would require a fundamental re-architecture of the network, it would solve the state bloat problem permanently by design.
-The path forward, therefore, should be a multi-pronged approach. Solana should continue to leverage its existing state compression for high-volume, low-value use cases where the trade-offs are acceptable. Simultaneously, it must prioritize the technical and governance work required to propose and implement a protocol-level archival and expiry system. This would be a multi-year effort executed through the SIMD process and would require collaboration from core teams like Anza and Jump.25
+#### Distinctions
+
+- **Existing Compression**: Tactical fix with immediate cost savings but compromises decentralization and composability.
+- **Proposal I**: Strategic, feasible solution formalizing archival with incentives.
+- **Proposal II**: Ultimate fix, solving bloat permanently via off-chain data and ZK-proofs.
+
+#### Path Forward
+
+- Leverage compression for high-volume, low-value use cases.
+- Prioritize Proposal I via SIMD for medium-term resilience.
+- Research Proposal II for long-term future-proofing.
 
 ### 6.3. The Path to Implementation via the SIMD Governance Process
 
-Any major change to the Solana protocol requires formalization through the Solana Improvement Document (SIMD) process.25 This process is collaborative and iterative, involving a proposal, community discussion, and a non-binding validator vote.25 The core development teams, such as Anza and Jump, play a significant role in proposing and implementing these changes.25
-For Proposal I, the path to implementation would involve drafting a detailed SIMD that outlines the two-tiered state model, the rules for state expiry, the economic incentives for archival nodes, and a clear migration strategy. This proposal would be submitted to the solana-improvement-documents repository and undergo a period of public review and debate on forums and in the Solana Discord.25 Final adoption would be contingent on a two-thirds supermajority vote from validators, signaling their sentiment for the change, followed by their decision to adopt the new software.25
+Major changes require **SIMD process**: collaborative proposal, discussion, validator vote.²⁵
+
+#### For Proposal I
+
+- Draft SIMD outlining two-tiered model, expiry rules, incentives, migration.
+- Submit to solana-improvement-documents repo for review.
+- Adopt via two-thirds validator supermajority.²⁵
 
 ## 7. Conclusion and Final Recommendations
 
 ### 7.1. Summary of Key Findings
 
-The analysis presented in this report confirms that Solana's account data storage model is a critical, accelerating problem with systemic implications for network decentralization, security, and user experience. The unpruned ledger, already over 400 TB in size, places a prohibitive burden on validators and leads to stake consolidation among well-capitalized entities. While the existing state compression has proven its value for specific applications like NFTs, it is not a complete or enduring solution, as it compromises on-chain interoperability and relies on centralized third parties for data availability.
+Solana's account model creates **accelerating state bloat** with systemic implications:
+
+- Unpruned ledger >400 TB, growing petabytes/year.²
+- High validator costs ($15K-$50K upfront, $500-$1K/month) create centralization barriers.⁶
+- Rent system imperfect; existing compression tactical but compromises composability.
 
 ### 7.2. Strategic Recommendations
 
-The following recommendations are provided to guide Solana's strategic response:
+#### Immediate Actions
 
-1. **Acknowledge and Differentiate**: Acknowledge the current state compression's value for niche applications that do not require on-chain data composability or guaranteed data availability. However, it must be recognized that this solution is a tactical fix, not a strategic one.
+1. **Acknowledge Compression's Role**: Value for niche, high-volume apps (e.g., NFTs) but recognize as tactical fix.
+2. **Prioritize Proposal I**: Feasible archival system via SIMD; decentralizes data availability, aligns with current ops.
+3. **Initiate Long-Term Research**: Explore Proposal II for permanent bloat elimination via ZK-proofs and off-chain data.
 
-2. **Prioritize the Feasible**: Prioritize the development and formal proposal of a generalized, protocol-level archival and expiry system (Proposal I). This solution is the most feasible and least disruptive "enduring" fix, as it aligns with the network's current operational reality and formalizes the role of archive nodes, thereby decentralizing the data availability layer.
+#### Multi-Phased Approach
 
-3. **Initiate Long-Term Research**: Simultaneously, initiate long-term research and development for a generalized verifiable off-chain data protocol (Proposal II). This represents the ultimate "enduring" solution that would fundamentally future-proof the network by decoupling on-chain state from large, off-chain data and leveraging new cryptographic primitives like ZK-proofs. This would be a multi-year effort that redefines the Solana account model.
+- **Short-Term**: Leverage compression where trade-offs acceptable.
+- **Medium-Term**: Implement archival expiry (1-3 years).
+- **Long-Term**: Redefine account model (3-5+ years).
 
 ### 7.3. Call to Action
 
-Solana is at a critical inflection point where a strategic decision on state management will define its path to capturing the multi-trillion-dollar opportunity in tokenizing real-world assets and building a new generation of consumer applications.^30 By addressing the state bloat imperative with a clear, multi-phased approach, the network can secure its future as a high-performance, decentralized, and scalable blockchain.
+At a critical inflection point, Solana must address state bloat to capture tokenization opportunities.³⁰ A clear, phased strategy secures high-performance, decentralized scalability.
 
 ## Works cited
 
