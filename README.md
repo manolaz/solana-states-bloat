@@ -139,7 +139,7 @@ State bloat exacerbates centralization, increases security vulnerabilities, and 
 
 Solana's state bloat issue is being actively addressed through strategic solutions like adaptive protocols and verifiable off-chain systems to sustain its high-performance architecture. Key approaches include:
 
-- Solana's "State Compression" (Avocado) aims to reduce storage bloat but has design limitations compared to more scalable solutions like Stellar’s State Archival.[1][2]
+- Solana's "State Compression" (Avocado) aims to reduce storage bloat but has design limitations compared to more scalable solutions like Stellar’s State Archival.[1, 2]
 - A major protocol overhaul proposed by the Solana spinout Anza seeks to improve scalability and decentralization by redistributing workloads, reducing bottlenecks, and lowering node hardware requirements.[3]
 - Layer 2 scaling solutions like SuperSol utilize Evanescent Rollups to enable high-frequency, low-latency execution off-chain with cryptographic proofs submitted to Solana’s base layer, preserving decentralization and composability.[4]
 - Verifiable off-chain computation protocols such as Bonsol allow execution results to be cryptographically verified on-chain, enhancing scalability without compromising trust.[5]
@@ -155,7 +155,7 @@ Tristan
 
 [1](https://stellar.org/blog/developers/introducing-state-archival-part-2-scalability-vs-solana-s-avocado)
 [2](https://stellar.org/blog/developers/introducing-state-archival-the-solution-to-state-bloat-on-stellar)
-[3](https://www.ainvest.com/news/solana-proposes-major-protocol-overhaul-boost-scalability-decentralization-2505/)
+[3](https://www.ainvest.com/news/solana-proposes-major-protocol-overhaul-boost-scalability-decentralization-2025/)
 [4](https://cointelegraph.com/news/just-scalability-wont-save-the-future-of-solana-heres-the-solution)
 [5](https://www.gate.com/learn/articles/bonsol-verifiable-compute-for-solana/2837)
 [6](https://www.range.org/blog/introducing-solana-attestation-service)
