@@ -1,33 +1,33 @@
 # Adaptive State Management Protocol (ASMP) for Solana
 
-## Executive Summary
+## Overview
 
-The Adaptive State Management Protocol (ASMP) is a comprehensive solution to Solana's state bloat that introduces a **three-tiered hybrid architecture** combining intelligent state transitions, economic incentives, and verifiable off-chain storage while preserving Solana's core principles of speed, composability, and decentralization.
+ASMP tackles Solana's state bloat with a smart three-tiered system. It combines intelligent data management, economic rewards, and secure off-chain storage – all while keeping Solana's speed, composability, and decentralization intact.
 
-## Architecture Overview
+## How It Works
 
-### Three-Tiered State Model
+### The Three-Tier System
 
-**Tier 1: Hot State (On-Chain Active)**
+**Hot State (Always Active)**
 
-- Frequently accessed accounts (accessed within 7 days)
-- Full validator replication for instant finality
-- Current rent mechanism applies
-- Size target: ~200-300 GB
+- Accounts used frequently (within 7 days)
+- Full replication across all validators for instant access
+- Uses current rent system
+- Target size: ~200-300 GB
 
-**Tier 2: Warm State (Hybrid Cache)**
+**Warm State (Smart Cache)**
 
-- Moderately active accounts (7-90 days since last access)
-- Cached by subset of validators using predictive algorithms
-- Cryptographic proofs stored on-chain
-- Fast reactivation (1-2 block delays)
+- Moderately used accounts (7-90 days since last access)
+- Cached by some validators with predictive smarts
+- On-chain proofs for verification
+- Quick reactivation (1-2 blocks)
 
-**Tier 3: Cold State (Verifiable Off-Chain)**
+**Cold State (Off-Chain Storage)**
 
 - Dormant accounts (90+ days inactive)
-- Distributed across decentralized storage network
-- Zero-knowledge proofs for integrity verification
-- Economic incentives for storage providers
+- Stored across decentralized networks
+- Zero-knowledge proofs ensure integrity
+- Rewards for storage providers
 
 ## Core Innovation: Predictive State Management
 
