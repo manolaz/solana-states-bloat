@@ -7,47 +7,47 @@
 
 ## Abstract
 
-This research paper provides an in-depth examination of Solana's state bloat challenge, a systemic issue arising from the network's architectural design that prioritizes high throughput through parallel transaction processing [12]. By analyzing quantitative metrics such as account sizes, transaction volumes, and storage growth trends [1, 3], the study reveals the escalating hardware burdens on validators and centralization risks threatening network decentralization [5]. The paper presents protocol-level solutions, including adaptive state management protocols and verifiable off-chain data systems, supported by economic modeling and cryptographic verification mechanisms [6, 7, 27]. Through comparative analysis with Ethereum's state management strategies and a critical review of existing compression techniques [31, 10], the research proposes enduring solutions that balance validator efficiency, developer interoperability, and user experience while preserving Solana's core advantages of speed and composability. The findings underscore the urgency of strategic intervention to secure Solana's long-term viability in tokenizing real-world assets and enabling consumer applications at scale [1, 2].
+This research paper provides an in-depth examination of Solana's state bloat challenge, a systemic issue arising from the network's architectural design that prioritizes high throughput through parallel transaction processing [1]. By analyzing quantitative metrics [1] such as account sizes, transaction volumes, and storage growth trends [1, 3], the study reveals the escalating hardware burdens on validators and centralization risks threatening network decentralization [5]. The paper presents protocol-level solutions, including adaptive state management protocols and verifiable off-chain data systems, supported by economic modeling and cryptographic verification mechanisms [6, 7, 27]. Through comparative analysis with Ethereum's state management strategies and a critical review of existing compression techniques [31, 10], the research proposes enduring solutions that balance validator efficiency, developer interoperability, and user experience while preserving Solana's core advantages of speed and composability. The findings underscore the urgency of strategic intervention to secure Solana's long-term viability in tokenizing real-world assets and enabling consumer applications at scale [1, 2].
 
 ## Table of Contents
 
 1. [Introduction](#introduction)
 2. [Methodology](#methodology)
 3. [Problem Analysis: Solana's State Bloat Imperative](#problem-analysis-solanas-state-bloat-imperative)
-   3.1. [The Account Model and On-Chain Footprint](#the-account-model-and-on-chain-footprint)
-   3.2. [Quantitative Analysis of State Growth and Validator Costs](#quantitative-analysis-of-state-growth-and-validator-costs)
-   3.3. [Developer and User Experience Impacts](#developer-and-user-experience-impacts)
+   - 3.1. [The Account Model and On-Chain Footprint](#the-account-model-and-on-chain-footprint)
+   - 3.2. [Quantitative Analysis of State Growth and Validator Costs](#quantitative-analysis-of-state-growth-and-validator-costs)
+   - 3.3. [Developer and User Experience Impacts](#developer-and-user-experience-impacts)
 4. [Comparative Analysis: Solana vs. Ethereum State Management](#comparative-analysis-solana-vs-ethereum-state-management)
-   4.1. [Architectural Paradigms](#architectural-paradigms)
-   4.2. [State Management Comparison](#state-management-comparison)
-   4.3. [Security and Decentralization](#security-and-decentralization)
+   - 4.1. [Architectural Paradigms](#architectural-paradigms)
+   - 4.2. [State Management Comparison](#state-management-comparison)
+   - 4.3. [Security and Decentralization](#security-and-decentralization)
 5. [Review of Existing State Compression Solutions](#review-of-existing-state-compression-solutions)
-   5.1. [Technical Mechanics of Concurrent Merkle Trees (cNFTs)](#technical-mechanics-of-concurrent-merkle-trees-cnfts)
-   5.2. [Successes and Limitations](#successes-and-limitations)
+   - 5.1. [Technical Mechanics of Concurrent Merkle Trees (cNFTs)](#technical-mechanics-of-concurrent-merkle-trees-cnfts)
+   - 5.2. [Successes and Limitations](#successes-and-limitations)
 6. [Proposed Architectural Solutions](#proposed-architectural-solutions)
-    6.1. [Adaptive State Management Protocol (ASMP)](#adaptive-state-management-protocol-asmp)
-        6.1.1. [Three-Tiered Architecture](#three-tiered-architecture)
-        6.1.2. [Core Innovation: Predictive State Management](#core-innovation-predictive-state-management)
-        6.1.3. [Economic Design](#economic-design)
-        6.1.4. [Technical Implementation](#technical-implementation)
-        6.1.5. [Performance Characteristics](#performance-characteristics)
-        6.1.6. [Migration Strategy](#migration-strategy)
-        6.1.7. [Decentralization Guarantees](#decentralization-guarantees)
-    6.2. [Protocol-Level Archival and Expiry System](#protocol-level-archival-and-expiry-system)
-        6.2.1. [Technical Blueprint for a Two-Tiered State Model](#technical-blueprint-for-a-two-tiered-state-model)
-        6.2.2. [Economic Incentives and State Archival Bounty](#economic-incentives-and-state-archival-bounty)
-        6.2.3. [Rehydration Mechanism](#rehydration-mechanism)
-        6.2.4. [Decentralized Storage Integration](#decentralized-storage-integration)
-        6.2.5. [Implementation Feasibility](#implementation-feasibility)
-        6.2.6. [Performance and Security Characteristics](#performance-and-security-characteristics)
-    6.3. [Generalized Verifiable Off-Chain Data Protocol](#generalized-verifiable-off-chain-data-protocol)
-        6.3.1. [Leveraging ZK-Proofs for On-Chain Integrity](#leveraging-zk-proofs-for-on-chain-integrity)
-        6.3.2. [Decentralized Storage Integration](#decentralized-storage-integration-1)
-        6.3.3. [Developer Tooling and SDKs](#developer-tooling-and-sdks)
-        6.3.4. [User Experience and Economic Model](#user-experience-and-economic-model)
-        6.3.5. [Composability and Interoperability](#composability-and-interoperability)
-        6.3.6. [Implementation Challenges and Timeline](#implementation-challenges-and-timeline)
-        6.3.7. [Security and Decentralization Guarantees](#security-and-decentralization-guarantees)
+   - 6.1. [Adaptive State Management Protocol (ASMP)](#adaptive-state-management-protocol-asmp)
+     - 6.1.1. [Three-Tiered Architecture](#three-tiered-architecture)
+     - 6.1.2. [Core Innovation: Predictive State Management](#core-innovation-predictive-state-management)
+     - 6.1.3. [Economic Design](#economic-design)
+     - 6.1.4. [Technical Implementation](#technical-implementation)
+     - 6.1.5. [Performance Characteristics](#performance-characteristics)
+     - 6.1.6. [Migration Strategy](#migration-strategy)
+     - 6.1.7. [Decentralization Guarantees](#decentralization-guarantees)
+   - 6.2. [Protocol-Level Archival and Expiry System](#protocol-level-archival-and-expiry-system)
+     - 6.2.1. [Technical Blueprint for a Two-Tiered State Model](#technical-blueprint-for-a-two-tiered-state-model)
+     - 6.2.2. [Economic Incentives and State Archival Bounty](#economic-incentives-and-state-archival-bounty)
+     - 6.2.3. [Rehydration Mechanism](#rehydration-mechanism)
+     - 6.2.4. [Decentralized Storage Integration](#decentralized-storage-integration)
+     - 6.2.5. [Implementation Feasibility](#implementation-feasibility)
+     - 6.2.6. [Performance and Security Characteristics](#performance-and-security-characteristics)
+   - 6.3. [Generalized Verifiable Off-Chain Data Protocol](#generalized-verifiable-off-chain-data-protocol)
+     - 6.3.1. [Leveraging ZK-Proofs for On-Chain Integrity](#leveraging-zk-proofs-for-on-chain-integrity)
+     - 6.3.2. [Decentralized Storage Integration](#decentralized-storage-integration-1)
+     - 6.3.3. [Developer Tooling and SDKs](#developer-tooling-and-sdks)
+     - 6.3.4. [User Experience and Economic Model](#user-experience-and-economic-model)
+     - 6.3.5. [Composability and Interoperability](#composability-and-interoperability)
+     - 6.3.6. [Implementation Challenges and Timeline](#implementation-challenges-and-timeline)
+     - 6.3.7. [Security and Decentralization Guarantees](#security-and-decentralization-guarantees)
 7. [Implications for Network Sustainability](#implications-for-network-sustainability)
 8. [Recommendations](#recommendations)
 9. [Conclusion](#conclusion)
@@ -497,36 +497,68 @@ Tristan
 
 ## References
 
-[1] Solana Ecosystem Report (H1 2025) — Earnings & Growth - Helius, accessed August 30, 2025, <https://www.helius.dev/blog/solana-ecosystem-report-h1-2025>
-[2] Solana H1 2025 Report: DeFi, RWAs & Inst. Growth - QuickNode Blog, accessed August 30, 2025, <https://blog.quicknode.com/solana-ecosystem-report-h1-2025/>
-[3] Solana Archive Node Guidelines - GetBlock.io, accessed August 30, 2025, <https://getblock.io/blog/solana-archive-node-guidelines/>
-[4] Solana Full Node: Complete Guide - GetBlock.io, accessed August 30, 2025, <https://getblock.io/blog/solana-full-node-complete-guide/>
-[5] Solana's Centralization Paradox and Its Economic Impact. | by Toba - Medium, accessed August 30, 2025, <https://medium.com/@tobs.x/solanas-centralization-paradox-and-its-economic-impact-cdd357abd9bc>
-[6] What is Rent on Solana and How to Calculate it | QuickNode Guides, accessed August 30, 2025, <https://www.quicknode.com/guides/solana-development/getting-started/understanding-rent-on-solana>
-[7] Cost of storage, maximum storage size, and account resizing in Solana - RareSkills, accessed August 30, 2025, <https://www.rareskills.io/post/solana-account-rent>
-[8] Program rent : r/solana - Reddit, accessed August 30, 2025, <https://www.reddit.com/r/solana/comments/r432am/program_rent/>
-[9] Solana Rent : r/Tangem - Reddit, accessed August 30, 2025, <https://www.reddit.com/r/Tangem/comments/1b5fakr/solana_rent/>
-[10] State Compression Unlocked 'Cambrian Explosion for Digital Assets' - Solana, accessed August 30, 2025, <https://solana.com/en/news/state-compression-update-december-2023>
-[11] Compressed NFTs - Solana, accessed August 30, 2025, <https://solana.com/developers/courses/state-compression/compressed-nfts>
-[12] State Compression | Solana - Solana Documentation, accessed August 30, 2025, <https://edge.docs.solana.com/learn/state-compression>
-[13] State Compression - Solana, accessed August 30, 2025, <https://solana.com/ja/developers/guides/advanced/state-compression>
-[14] Generalized State Compression objectives | Solana, accessed August 30, 2025, <https://solana.com/ru/developers/courses/state-compression/generalized-state-compression>
-[15] Merkle Trees and Concurrent Merkle Trees - Solana Stack Exchange, accessed August 30, 2025, <https://solana.stackexchange.com/questions/20876/merkle-trees-and-concurrent-merkle-trees>
-[16] What are Compressed NFTs and How to Mint one on Solana | QuickNode Guides, accessed August 30, 2025, <https://www.quicknode.com/guides/solana-development/nfts/mint-compressed-nft>
-[17] Solana's Revolutionary Compression Technology: Reshaping NFTs and Blockchain Data Storage, accessed August 30, 2025, <https://solanacompass.com/learn/Validated/validated-how-compression-is-changing-how-we-think-about-nfts>
-[18] Compressed NFTs Explained: How to Mint cNFTs with No-Code - Crossmint Blog, accessed August 30, 2025, <https://blog.crossmint.com/compressed-nfts-explained/>
-[19] Scalability with State Archival on Stellar vs. Solana's Avocado - Stellar, accessed August 30, 2025, <https://stellar.org/blog/developers/introducing-state-archival-part-2-scalability-vs-solana-s-avocado>
-[20] Scalability with State Archival on Stellar vs. Solana's Avocado - "The ..., accessed August 30, 2025, <https://thedefiant.io/news/defi/scalability-with-state-archival-on-stellar-vs-solana-s-avocado>
-[21] Alpenglow Vote Could Redefine Solana's Protocol - Cointribune, accessed August 30, 2025, <https://www.cointribune.com/en/alpenglow-vote-could-redefine-solanas-protocol/>
-[22] Solana's Alpenglow Upgrade: A Game-Changer for Blockchain ..., accessed August 30, 2025, <https://www.ainvest.com/news/solana-alpenglow-upgrade-game-changer-blockchain-speed-institutional-adoption-2508/>
-[23] Understanding Solana Improvement Documents (SIMDs): A Deep Dive into Protocol Governance and Comparison with Ethereum's EIPs - DeFi Prime, accessed August 30, 2025, <https://defiprime.com/solana-simds>
-[24] Using Governance to Prioritize SIMD Acceptance · solana-foundation solana-improvement-documents · Discussion #227 - GitHub, accessed August 30, 2025, <https://github.com/solana-foundation/solana-improvement-documents/discussions/227>
-[25] Solana Governance: A Comprehensive Analysis - Helius, accessed August 30, 2025, <https://www.helius.dev/blog/solana-governance--a-comprehensive-analysis>
-[26] Solana Archive Node: Complete guide NOWNodes Blog, accessed August 30, 2025, <https://nownodes.io/blog/solana-archive-node-complete-guide/>
-[27] Zk Proofs to Verify Off-chain Data | Space and Time - SpaceandTime.io, accessed August 30, 2025, <https://www.spaceandtime.io/blog/zk-proofs-to-verify-off-chain-data>
-[28] Best ZK Platforms On Solana: Top Zero-Knowledge Proof Solutions, accessed August 30, 2025, <https://solanacompass.com/projects/category/research/zk-proofs>
-[29] What Is Data Availability in Blockchain? Ensuring Secure and Accessible On-chain Data, accessed August 30, 2025, <https://www.bitstamp.net/learn/blockchain/what-is-data-availability-in-blockchain-ensuring-secure-and-accessible-on-chain-data/>
-[30] BTFS TRON Network: Unlocking Decentralized Storage with Advanced Features | OKX, accessed August 30, 2025, <https://www.okx.com/learn/btfs-tron-network-decentralized-storage>
-[31] How to Raise the Gas Limit, Part 1: State Growth - Paradigm, accessed August 30, 2025, <https://www.paradigm.xyz/2024/03/how-to-raise-the-gas-limit-1>
-[32] Aalborg Universitet Stateful to Stateless Modelling Stateless Ethereum Johnson, Sandra; Hyland-Wood, David, accessed August 30, 2025, <https://vbn.aau.dk/files/528666041/2203.12435.pdf>
-[33] Stateless validation in a sharded blockchain - Ethereum Research, accessed August 30, 2025, <https://ethresear.ch/t/stateless-validation-in-a-sharded-blockchain/18763>
+[1] Helius. "Solana Ecosystem Report (H1 2025) — Earnings & Growth." Accessed August 30, 2025. <https://www.helius.dev/blog/solana-ecosystem-report-h1-2025>
+
+[2] QuickNode Blog. "Solana H1 2025 Report: DeFi, RWAs & Inst. Growth." Accessed August 30, 2025. <https://blog.quicknode.com/solana-ecosystem-report-h1-2025/>
+
+[3] GetBlock.io. "Solana Archive Node Guidelines." Accessed August 30, 2025. <https://getblock.io/blog/solana-archive-node-guidelines/>
+
+[4] GetBlock.io. "Solana Full Node: Complete Guide." Accessed August 30, 2025. <https://getblock.io/blog/solana-full-node-complete-guide/>
+
+[5] Toba. "Solana's Centralization Paradox and Its Economic Impact." Medium. Accessed August 30, 2025. <https://medium.com/@tobs.x/solanas-centralization-paradox-and-its-economic-impact-cdd357abd9bc>
+
+[6] QuickNode Guides. "What is Rent on Solana and How to Calculate it." Accessed August 30, 2025. <https://www.quicknode.com/guides/solana-development/getting-started/understanding-rent-on-solana>
+
+[7] RareSkills. "Cost of storage, maximum storage size, and account resizing in Solana." Accessed August 30, 2025. <https://www.rareskills.io/post/solana-account-rent>
+
+[8] r/solana. "Program rent." Reddit. Accessed August 30, 2025. <https://www.reddit.com/r/solana/comments/r432am/program_rent/>
+
+[9] r/Tangem. "Solana Rent." Reddit. Accessed August 30, 2025. <https://www.reddit.com/r/Tangem/comments/1b5fakr/solana_rent/>
+
+[10] Solana. "State Compression Unlocked 'Cambrian Explosion for Digital Assets'." Accessed August 30, 2025. <https://solana.com/en/news/state-compression-update-december-2023>
+
+[11] Solana. "Compressed NFTs." Accessed August 30, 2025. <https://solana.com/developers/courses/state-compression/compressed-nfts>
+
+[12] Solana Documentation. "State Compression." Accessed August 30, 2025. <https://edge.docs.solana.com/learn/state-compression>
+
+[13] Solana. "State Compression." Accessed August 30, 2025. <https://solana.com/ja/developers/guides/advanced/state-compression>
+
+[14] Solana. "Generalized State Compression objectives." Accessed August 30, 2025. <https://solana.com/ru/developers/courses/state-compression/generalized-state-compression>
+
+[15] Solana Stack Exchange. "Merkle Trees and Concurrent Merkle Trees." Accessed August 30, 2025. <https://solana.stackexchange.com/questions/20876/merkle-trees-and-concurrent-merkle-trees>
+
+[16] QuickNode Guides. "What are Compressed NFTs and How to Mint one on Solana." Accessed August 30, 2025. <https://www.quicknode.com/guides/solana-development/nfts/mint-compressed-nft>
+
+[17] SolanaCompass. "Solana's Revolutionary Compression Technology: Reshaping NFTs and Blockchain Data Storage." Accessed August 30, 2025. <https://solanacompass.com/learn/Validated/validated-how-compression-is-changing-how-we-think-about-nfts>
+
+[18] Crossmint Blog. "Compressed NFTs Explained: How to Mint cNFTs with No-Code." Accessed August 30, 2025. <https://blog.crossmint.com/compressed-nfts-explained/>
+
+[19] Stellar. "Scalability with State Archival on Stellar vs. Solana's Avocado." Accessed August 30, 2025. <https://stellar.org/blog/developers/introducing-state-archival-part-2-scalability-vs-solana-s-avocado>
+
+[20] The Defiant. "Scalability with State Archival on Stellar vs. Solana's Avocado." Accessed August 30, 2025. <https://thedefiant.io/news/defi/scalability-with-state-archival-on-stellar-vs-solana-s-avocado>
+
+[21] Cointribune. "Alpenglow Vote Could Redefine Solana's Protocol." Accessed August 30, 2025. <https://www.cointribune.com/en/alpenglow-vote-could-redefine-solanas-protocol/>
+
+[22] AInvest. "Solana's Alpenglow Upgrade: A Game-Changer for Blockchain Speed and Institutional Adoption." Accessed August 30, 2025. <https://www.ainvest.com/news/solana-alpenglow-upgrade-game-changer-blockchain-speed-institutional-adoption-2508/>
+
+[23] DeFi Prime. "Understanding Solana Improvement Documents (SIMDs): A Deep Dive into Protocol Governance and Comparison with Ethereum's EIPs." Accessed August 30, 2025. <https://defiprime.com/solana-simds>
+
+[24] Solana Foundation. "Using Governance to Prioritize SIMD Acceptance." GitHub Discussions. Accessed August 30, 2025. <https://github.com/solana-foundation/solana-improvement-documents/discussions/227>
+
+[25] Helius. "Solana Governance: A Comprehensive Analysis." Accessed August 30, 2025. <https://www.helius.dev/blog/solana-governance--a-comprehensive-analysis>
+
+[26] NOWNodes Blog. "Solana Archive Node: Complete guide." Accessed August 30, 2025. <https://nownodes.io/blog/solana-archive-node-complete-guide/>
+
+[27] Space and Time. "Zk Proofs to Verify Off-chain Data." Accessed August 30, 2025. <https://www.spaceandtime.io/blog/zk-proofs-to-verify-off-chain-data>
+
+[28] SolanaCompass. "Best ZK Platforms On Solana: Top Zero-Knowledge Proof Solutions." Accessed August 30, 2025. <https://solanacompass.com/projects/category/research/zk-proofs>
+
+[29] Bitstamp. "What Is Data Availability in Blockchain? Ensuring Secure and Accessible On-chain Data." Accessed August 30, 2025. <https://www.bitstamp.net/learn/blockchain/what-is-data-availability-in-blockchain-ensuring-secure-and-accessible-on-chain-data/>
+
+[30] OKX. "BTFS TRON Network: Unlocking Decentralized Storage with Advanced Features." Accessed August 30, 2025. <https://www.okx.com/learn/btfs-tron-network-decentralized-storage>
+
+[31] Paradigm. "How to Raise the Gas Limit, Part 1: State Growth." Accessed August 30, 2025. <https://www.paradigm.xyz/2024/03/how-to-raise-the-gas-limit-1>
+
+[32] Johnson, Sandra; Hyland-Wood, David. "Stateful to Stateless Modelling Stateless Ethereum." Aalborg Universitet. Accessed August 30, 2025. <https://vbn.aau.dk/files/528666041/2203.12435.pdf>
+
+[33] Ethereum Research. "Stateless validation in a sharded blockchain." Accessed August 30, 2025. <https://ethresear.ch/t/stateless-validation-in-a-sharded-blockchain/18763>
