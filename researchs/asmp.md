@@ -1,5 +1,5 @@
 
-# The Adaptive State Management Protocol (ASMP) for Solana: A Technical and Economic Analysis
+# ASMP: Revolutionizing Solana's State Management
 
 ## Executive Summary
 
