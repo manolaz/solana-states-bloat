@@ -347,7 +347,7 @@ interface AdaptiveRentModel {
 
 ```mermaid
 gantt
-    title ASMP Implementation Roadmap
+    title "ASMP Implementation Roadmap"
     dateFormat YYYY-MM-DD
     section Phase 1: Infrastructure
     Deploy storage infrastructure : 2025-09-01, 180d
@@ -378,7 +378,7 @@ gantt
   - Cold state: 5-30 second retrieval
 
 ```mermaid
-pie title ASMP Performance Improvements
+pie title "ASMP Performance Improvements"
     "Storage Reduction (60-80%)" : 70
     "Validator Cost Reduction (40-60%)" : 50
     "Throughput Preservation" : 100
@@ -507,7 +507,7 @@ sequenceDiagram
 
 ```mermaid
 gantt
-    title Comprehensive Solana State Bloat Solutions Implementation
+    title "Comprehensive Solana State Bloat Solutions Implementation"
     dateFormat YYYY-MM-DD
     section ASMP (Primary Solution)
     Phase 1: Infrastructure Development : 2025-09-01, 2026-02-28
@@ -552,16 +552,16 @@ State bloat mitigation is crucial for:
 - Supporting real-world asset tokenization initiatives
 
 ```mermaid
-flowchart TD
-    A[State Bloat Mitigation] --> B[Maintain Validator<br/>Decentralization]
-    A --> C[Reduce Entry<br/>Barriers]
-    A --> D[Enable Sustainable<br/>Scaling]
-    A --> E[Support RWA<br/>Tokenization]
+flowchart LR
+    A[State Bloat Mitigation] --> B[Maintain Validator Decentralization]
+    A --> C[Reduce Entry Barriers]
+    A --> D[Enable Sustainable Scaling]
+    A --> E[Support RWA Tokenization]
     
-    B --> F[Enhanced Network<br/>Security]
-    C --> G[Ecosystem<br/>Growth]
-    D --> H[Mainstream<br/>Adoption]
-    E --> I[Real-World<br/>Integration]
+    B --> F[Enhanced Network Security]
+    C --> G[Ecosystem Growth]
+    D --> H[Mainstream Adoption]
+    E --> I[Real-World Integration]
     
     F --> J[Long-term Viability]
     G --> J
