@@ -1,5 +1,5 @@
 
-# The Adaptive State Management Protocol (ASMA more promising alternative can be observed in the Alpenglow consensus proposal (SIMD-0326). This proposal aims to replace the unpredictable on-chain vote fees with a fixed, per-epoch "Validator Admission Ticket" (VAT) [21]. The funds from the VAT are burned, which helps offset inflation and creates a more transparent and predictable economic model for validators[6]. This approach is seen as a way to democratize validator participation by lowering costs and making them more accessible, which would help decentralize the validator set.) for Solana: A Technical and Economic Analysis
+# The Adaptive State Management Protocol (ASMP) for Solana: A Technical and Economic Analysis
 
 ## Executive Summary
 
