@@ -233,6 +233,18 @@ ASMP represents our primary recommendation for addressing Solana's state bloat w
 - 5-30 second retrieval time
 - Eliminates ongoing rent requirements
 
+```mermaid
+stateDiagram-v2
+    [*] --> Hot : Account Created
+    Hot --> Warm : 7 days inactive
+    Warm --> Cold : 90 days inactive
+    Cold --> Warm : Access
+    Warm --> Hot : Frequent access
+    Hot --> [*] : Deleted
+    Warm --> [*] : Deleted
+    Cold --> [*] : Deleted
+```
+
 #### 6.1.2 Predictive State Management Innovation
 
 The protocol employs machine learning algorithms to analyze usage patterns and optimize state transitions:
